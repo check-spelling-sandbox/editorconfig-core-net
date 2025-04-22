@@ -51,8 +51,17 @@ jobs:
       env:
         GH_TOKEN: ${{ github.token }}
       shell: bash
-      run:  |
-        until dotnet nuget push 'build/output/*.nupkg' -k "$GH_TOKEN" --skip-duplicate --no-symbols true; do echo "Retrying"; sleep 1; done;
+      run: |
+        : publish to github package repository
+        log=$(mktemp)
+        until dotnet nuget push 'build/output/*.nupkg' -k "$GH_TOKEN" --skip-duplicate --no-symbols true | tee "$log"; do
+          if grep --color=always '^error:.*' "$log"; then
+            perl -ne 'next unless s/^error: /::error ::/; print;' "$log"
+            exit 1
+          fi
+          echo "Retrying"
+          sleep 1
+        done
 
     - name: Generate release notes for tag
       if: github.event_name == 'push' && startswith(github.ref, 'refs/tags')
