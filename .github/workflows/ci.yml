@@ -2,7 +2,7 @@ name: Always be deploying
 
 on:
   pull_request:
-    paths-ignore: 
+    paths-ignore:
       - 'README.md'
       - '.editorconfig'
   push:
@@ -10,7 +10,7 @@ on:
       - 'README.md'
       - '.editorconfig'
     branches:
-      - master 
+      - master
     tags:
       - "*.*.*"
 
@@ -34,7 +34,7 @@ jobs:
           source-url: https://nuget.pkg.github.com/editorconfig/index.json
       env:
           NUGET_AUTH_TOKEN: ${{github.token}}
-        
+
     - name: Build
       run: ./build.sh build -s true
     - name: Generate local nuget packages
@@ -60,7 +60,7 @@ jobs:
       env:
         GH_TOKEN: ${{ github.token }}
       run: ./build.sh createreleaseongithub -s true --token "$GH_TOKEN"
-      
+
     - name: release to nuget.org
       if: github.event_name == 'push' && startswith(github.ref, 'refs/tags')
       env:
