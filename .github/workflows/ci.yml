@@ -11,6 +11,7 @@ on:
       - '.editorconfig'
     branches:
       - master
+      - workflows
     tags:
       - "*.*.*"
 
